@@ -24,7 +24,7 @@ const logo: React.CSSProperties = {
   alignItems: "center",
 };
 
-export const Main = ({ title }: z.infer<typeof CompositionProps>) => {
+export const Main = ({ prompt }: z.infer<typeof CompositionProps>) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -55,7 +55,7 @@ export const Main = ({ title }: z.infer<typeof CompositionProps>) => {
       </Sequence>
       <Sequence from={transitionStart + transitionDuration / 2}>
         <TextFade>
-          <h1 style={titleStyle}>{title}</h1>
+          <h1 style={titleStyle}>{prompt}</h1>
         </TextFade>
       </Sequence>
     </AbsoluteFill>

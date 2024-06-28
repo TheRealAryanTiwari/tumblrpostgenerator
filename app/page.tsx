@@ -3,7 +3,7 @@
 import { Player } from "@remotion/player";
 import type { NextPage } from "next";
 import React, { useMemo, useState } from "react";
-import { Main } from "../remotion/MyComp/Main";
+import { Main } from "../remotion/MinecraftTumblr/Main";
 import {
   CompositionProps,
   defaultMyCompProps,
@@ -14,13 +14,13 @@ import {
 } from "../types/constants";
 import { z } from "zod";
 import { RenderControls } from "../components/RenderControls";
-import { Tips } from "../components/Tips/Tips";
-import { Spacing } from "../components/Spacing";
 
 const container: React.CSSProperties = {
-  maxWidth: 768,
+  maxWidth: 400,
   margin: "auto",
   marginBottom: 20,
+  justifyContent:"center",
+  alignItems:"center"
 };
 
 const outer: React.CSSProperties = {
@@ -36,13 +36,19 @@ const player: React.CSSProperties = {
 };
 
 const Home: NextPage = () => {
-  const [text, setText] = useState<string>(defaultMyCompProps.title);
+  const [promptText, setPromptText] = useState<string>(defaultMyCompProps.prompt);
+  const [postText, setPostText] = useState<string>(defaultMyCompProps.post)
+  const [audioURL, setAudioURL] = useState<string>(defaultMyCompProps.audioURL)
+  // const [audioLength, setAudioLength] = useState<number>(defaultMyCompProps.audioLength)
 
   const inputProps: z.infer<typeof CompositionProps> = useMemo(() => {
     return {
-      title: text,
+      prompt: promptText,
+      post: postText,
+      audioURL: audioURL,
+      // audioLength: audioLength
     };
-  }, [text]);
+  }, [promptText, postText, audioURL]);
 
   return (
     <div>
@@ -57,20 +63,17 @@ const Home: NextPage = () => {
             compositionWidth={VIDEO_WIDTH}
             style={player}
             controls
-            autoPlay
             loop
           />
         </div>
         <RenderControls
-          text={text}
-          setText={setText}
+          postText={postText}
+          promptText={promptText}
+          setPromptText={setPromptText}
+          setPostText={setPostText}
+          setAudioURL={setAudioURL}
           inputProps={inputProps}
         ></RenderControls>
-        <Spacing></Spacing>
-        <Spacing></Spacing>
-        <Spacing></Spacing>
-        <Spacing></Spacing>
-        <Tips></Tips>
       </div>
     </div>
   );
