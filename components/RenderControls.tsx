@@ -68,9 +68,9 @@ export const RenderControls: React.FC<{
               alignItems: "center",
               justifyContent:"center",
 
-              border: "solid",
-              borderWidth: 4,
-              borderColor: "red",
+              // border: "solid",
+              // borderWidth: 4,
+              // borderColor: "red",
           }}>
             {state.status === "init" ||
             state.status === "invoking" ||
@@ -99,11 +99,13 @@ export const RenderControls: React.FC<{
                 justifyContent:"center",
 
 
-                border: "solid",
-                borderWidth: 4,
-                borderColor: "blue",
+                // border: "solid",
+                // borderWidth: 4,
+                // borderColor: "blue",
                }}>
-                  <Button onClick={generateScriptAndAudio}>Generate Video</Button>
+                  <Button onClick={generateScriptAndAudio}>
+                    Generate Post + Voiceover
+                  </Button>
 
                   <Spacing></Spacing>
                   <Spacing></Spacing>
@@ -114,7 +116,7 @@ export const RenderControls: React.FC<{
                     loading={state.status === "invoking"}
                     onClick={renderMedia}
                   >
-                    Render video
+                    Render
                   </Button>
                 {state.status === "error" ? (
                   <ErrorComp message={state.error.message}></ErrorComp>
