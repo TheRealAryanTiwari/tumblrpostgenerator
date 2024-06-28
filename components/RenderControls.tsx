@@ -9,18 +9,8 @@ import { ErrorComp } from "./Error";
 import { Input } from "./Input";
 import { ProgressBar } from "./ProgressBar";
 import { Spacing } from "./Spacing";
-import { createAudioStreamFromText } from "./text_to_speech_stream";
-import { generatePresignedUrl, uploadAudioStreamToS3 } from "./s3_uploader";
-import { getAudioData } from "@remotion/media-utils";
-
-import Together from "together-ai";
-
-import "dotenv/config";
-import { CostExplorer } from "aws-sdk";
-
-const together = new Together({
-  apiKey: process.env["NEXT_PUBLIC_TOGETHER_API_KEY"]
-});
+import { generateScript } from "./generateScript";
+import { generateAndUploadAudio } from "./generateAndUploadAudio";
 
 export const RenderControls: React.FC<{
   promptText: string;
@@ -32,7 +22,6 @@ export const RenderControls: React.FC<{
   inputProps: z.infer<typeof CompositionProps>;
 }> = ({ 
   promptText, 
-  postText, 
   setPromptText, 
   setPostText, 
   setAudioURL,
@@ -41,34 +30,13 @@ export const RenderControls: React.FC<{
 }) => {
   const { renderMedia, state, undo } = useRendering(COMP_NAME, inputProps);
 
-  async function fetchChatCompletion() {
-    const response = await together.chat.completions.create({
-      messages: [{ role: "user", content: promptText}],
-      model: "meta-llama/Llama-3-8b-chat-hf",
-    });
+  async function generateScriptAndAudio() {
+    const script = await generateScript(promptText)
     
-    if (response?.choices?.[0]?.message?.content) {
-      // console.log(response.choices[0].message.content);
-      setPostText(response.choices[0].message.content);
+    if (script) {
+      setPostText(script)
+      generateAndUploadAudio(script, setAudioURL, setAudioLength)
     }
-  }
-
-  async function generateAndUploadAudio() {
-  // OR stream the audio, upload to S3, and get a presigned URL
-  const stream = await createAudioStreamFromText(postText);
-
-  const s3path = await uploadAudioStreamToS3(stream);
-
-  const presignedUrl = await generatePresignedUrl(s3path);
-
-  setAudioURL(presignedUrl)
-
-  const audioData = await getAudioData(presignedUrl);
-  // console.log(audioData)
-
-  setAudioLength(audioData.durationInSeconds * 30)
-
-  console.log("Presigned URL:", presignedUrl);
   }
 
   return (
@@ -109,10 +77,7 @@ export const RenderControls: React.FC<{
         </>
       ) : null}
 
-    <Button onClick={fetchChatCompletion}>Generate Video</Button>
-
-
-    <Button onClick={generateAndUploadAudio} >Test audio maker</Button>
+    <Button onClick={generateScriptAndAudio}>Generate Video</Button>
 
     </InputContainer>
   );
