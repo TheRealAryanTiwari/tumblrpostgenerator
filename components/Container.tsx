@@ -6,10 +6,10 @@ const inputContainer: React.CSSProperties = {
   borderRadius: "var(--geist-border-radius)",
   backgroundColor: "var(--background)",
   display: "flex",
-  flexDirection: "column",
-  width: "140%",
+  flexDirection: "row",
+  width: "100%",
   alignItems: "center",
-  justifyContent:"center"
+  justifyContent:"center",
 };
 
 export const InputContainer: React.FC<{

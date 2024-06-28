@@ -19,7 +19,7 @@ const container: React.CSSProperties = {
   margin: "auto",
   marginBottom: 20,
   justifyContent:"center",
-  alignItems:"center"
+  alignItems:"center",
 };
 
 const outer: React.CSSProperties = {
@@ -73,7 +73,7 @@ const Home: NextPage = () => {
           setAudioURL={setAudioURL}
           setAudioLength={setAudioLength}
           inputProps={inputProps}
-        ></RenderControls>
+        />
       </div>
     </div>
   );

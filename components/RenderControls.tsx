@@ -3,7 +3,6 @@ import { useRendering } from "../helpers/use-rendering";
 import { CompositionProps, COMP_NAME } from "../types/constants";
 import { AlignEnd } from "./AlignEnd";
 import { Button } from "./Button/Button";
-import { InputContainer } from "./Container";
 import { DownloadButton } from "./DownloadButton";
 import { ErrorComp } from "./Error";
 import { Input } from "./Input";
@@ -11,6 +10,10 @@ import { ProgressBar } from "./ProgressBar";
 import { Spacing } from "./Spacing";
 import { generateScript } from "./generateScript";
 import { generateAndUploadAudio } from "./generateAndUploadAudio";
+import { loadFont, fontFamily } from "@remotion/google-fonts/Inter";
+import React, { useMemo } from "react";
+
+loadFont();
 
 export const RenderControls: React.FC<{
   promptText: string;
@@ -30,8 +33,12 @@ export const RenderControls: React.FC<{
 }) => {
   const { renderMedia, state, undo } = useRendering(COMP_NAME, inputProps);
 
+  const titleStyle: React.CSSProperties = useMemo(() => {
+    return { fontFamily, fontSize: 25, color: "white" };
+  }, []);
+
   async function generateScriptAndAudio() {
-    const script = await generateScript(promptText)
+    const script = await generateScript(promptText + ". limit the output to less than 175 words")
     
     if (script) {
       setPostText(script)
@@ -40,45 +47,94 @@ export const RenderControls: React.FC<{
   }
 
   return (
-    <InputContainer>
-      {state.status === "init" ||
-      state.status === "invoking" ||
-      state.status === "error" ? (
-        <>
-          <Input
-            disabled={state.status === "invoking"}
-            setText={setPromptText}
-            text={promptText}
-          ></Input>
-          <Spacing></Spacing>
-          <AlignEnd>
-            <Button
-              disabled={state.status === "invoking"}
-              loading={state.status === "invoking"}
-              onClick={renderMedia}
-            >
-              Render video
-            </Button>
-          </AlignEnd>
-          {state.status === "error" ? (
-            <ErrorComp message={state.error.message}></ErrorComp>
-          ) : null}
-        </>
-      ) : null}
-      {state.status === "rendering" || state.status === "done" ? (
-        <>
-          <ProgressBar
-            progress={state.status === "rendering" ? state.progress : 1}
-          />
-          <Spacing></Spacing>
-          <AlignEnd>
-            <DownloadButton undo={undo} state={state}></DownloadButton>
-          </AlignEnd>
-        </>
-      ) : null}
+      // <InputContainer>
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column",
+          border: "1px solid var(--unfocused-border-color)",
+          padding: "var(--geist-pad)",
+          borderRadius: "var(--geist-border-radius)",
+          backgroundColor: "var(--background)",
 
-    <Button onClick={generateScriptAndAudio}>Generate Video</Button>
+            // border: "solid",
+            // borderWidth: 4,
+            // borderColor: "green",
+            // width: "100%",
+        }}>
+          
+          <div style={{ 
+              display:"flex", 
+              flexDirection: "column", 
+              alignItems: "center",
+              justifyContent:"center",
 
-    </InputContainer>
+              border: "solid",
+              borderWidth: 4,
+              borderColor: "red",
+          }}>
+            {state.status === "init" ||
+            state.status === "invoking" ||
+            state.status === "error" ? 
+              (<>
+                <h1 style={titleStyle}>Enter your prompt:</h1>
+                <Input
+                disabled={state.status === "invoking"}
+                setText={setPromptText}
+                text={promptText}
+                ></Input>
+                <Spacing></Spacing>
+                <Spacing></Spacing>
+                <Spacing></Spacing>
+              </>) 
+            : null}
+            
+            {state.status === "init" ||
+            state.status === "invoking" ||
+            state.status === "error" ? (
+              <div style={{ 
+                width: "100%",
+                display:"flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent:"center",
+
+
+                border: "solid",
+                borderWidth: 4,
+                borderColor: "blue",
+               }}>
+                  <Button onClick={generateScriptAndAudio}>Generate Video</Button>
+
+                  <Spacing></Spacing>
+                  <Spacing></Spacing>
+                  <Spacing></Spacing>
+
+                  <Button
+                    disabled={state.status === "invoking"}
+                    loading={state.status === "invoking"}
+                    onClick={renderMedia}
+                  >
+                    Render video
+                  </Button>
+                {state.status === "error" ? (
+                  <ErrorComp message={state.error.message}></ErrorComp>
+                ) : null}
+                
+              </div>
+            ) : null}
+            {state.status === "rendering" || state.status === "done" ? (
+              <div style={{ }}>
+                <ProgressBar
+                  progress={state.status === "rendering" ? state.progress : 1}
+                />
+                <Spacing></Spacing>
+                <AlignEnd>
+                  <DownloadButton undo={undo} state={state}></DownloadButton>
+                </AlignEnd>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      // </InputContainer>
   );
 };
