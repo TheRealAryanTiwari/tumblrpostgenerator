@@ -5,9 +5,6 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const { v4: uuid } = require('uuid')
-import * as dotenv from "dotenv";
-
-dotenv.config();
 
 const NEXT_PUBLIC_AWS_ACCESS_KEY_ID = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
 const NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY

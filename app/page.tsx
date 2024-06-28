@@ -7,7 +7,6 @@ import { Main } from "../remotion/MinecraftTumblr/Main";
 import {
   CompositionProps,
   defaultMyCompProps,
-  DURATION_IN_FRAMES,
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
@@ -39,14 +38,14 @@ const Home: NextPage = () => {
   const [promptText, setPromptText] = useState<string>(defaultMyCompProps.prompt);
   const [postText, setPostText] = useState<string>(defaultMyCompProps.post)
   const [audioURL, setAudioURL] = useState<string>(defaultMyCompProps.audioURL)
-  // const [audioLength, setAudioLength] = useState<number>(defaultMyCompProps.audioLength)
+  const [audioLength, setAudioLength] = useState<number>(defaultMyCompProps.audioLength)
 
   const inputProps: z.infer<typeof CompositionProps> = useMemo(() => {
     return {
       prompt: promptText,
       post: postText,
       audioURL: audioURL,
-      // audioLength: audioLength
+      audioLength: audioLength
     };
   }, [promptText, postText, audioURL]);
 
@@ -57,7 +56,7 @@ const Home: NextPage = () => {
           <Player
             component={Main}
             inputProps={inputProps}
-            durationInFrames={DURATION_IN_FRAMES}
+            durationInFrames={audioLength}
             fps={VIDEO_FPS}
             compositionHeight={VIDEO_HEIGHT}
             compositionWidth={VIDEO_WIDTH}
@@ -72,6 +71,7 @@ const Home: NextPage = () => {
           setPromptText={setPromptText}
           setPostText={setPostText}
           setAudioURL={setAudioURL}
+          setAudioLength={setAudioLength}
           inputProps={inputProps}
         ></RenderControls>
       </div>

@@ -11,11 +11,12 @@ import { ProgressBar } from "./ProgressBar";
 import { Spacing } from "./Spacing";
 import { createAudioStreamFromText } from "./text_to_speech_stream";
 import { generatePresignedUrl, uploadAudioStreamToS3 } from "./s3_uploader";
-import { useEffect } from "react";
+import { getAudioData } from "@remotion/media-utils";
 
 import Together from "together-ai";
 
 import "dotenv/config";
+import { CostExplorer } from "aws-sdk";
 
 const together = new Together({
   apiKey: process.env["NEXT_PUBLIC_TOGETHER_API_KEY"]
@@ -27,13 +28,15 @@ export const RenderControls: React.FC<{
   setPromptText: React.Dispatch<React.SetStateAction<string>>;
   setPostText: React.Dispatch<React.SetStateAction<string>>;
   setAudioURL: React.Dispatch<React.SetStateAction<string>>;
+  setAudioLength: React.Dispatch<React.SetStateAction<number>>
   inputProps: z.infer<typeof CompositionProps>;
 }> = ({ 
   promptText, 
   postText, 
   setPromptText, 
   setPostText, 
-  setAudioURL, 
+  setAudioURL,
+  setAudioLength,
   inputProps 
 }) => {
   const { renderMedia, state, undo } = useRendering(COMP_NAME, inputProps);
@@ -45,35 +48,28 @@ export const RenderControls: React.FC<{
     });
     
     if (response?.choices?.[0]?.message?.content) {
-      console.log(response.choices[0].message.content);
+      // console.log(response.choices[0].message.content);
       setPostText(response.choices[0].message.content);
     }
   }
 
-
   async function generateAndUploadAudio() {
-  // save the audio file to disk
-  // const fileName = await synthesizeAndSave(
-  //   "Today, the sky is exceptionally clear, and the sun shines brightly."
-  // );
-
-  // console.log("File name:", fileName);
-
   // OR stream the audio, upload to S3, and get a presigned URL
-  const stream = await createAudioStreamFromText(
-    "Today, the sky is exceptionally clear, and the sun shines brightly."
-  );
+  const stream = await createAudioStreamFromText(postText);
 
   const s3path = await uploadAudioStreamToS3(stream);
 
   const presignedUrl = await generatePresignedUrl(s3path);
 
+  setAudioURL(presignedUrl)
+
+  const audioData = await getAudioData(presignedUrl);
+  // console.log(audioData)
+
+  setAudioLength(audioData.durationInSeconds * 30)
+
   console.log("Presigned URL:", presignedUrl);
   }
-  
-  // useEffect(() => {
-  //   generateAndUploadAudio();
-  // }, [])
 
   return (
     <InputContainer>
@@ -113,7 +109,7 @@ export const RenderControls: React.FC<{
         </>
       ) : null}
 
-    <Button onClick={fetchChatCompletion} >Generate Video</Button>
+    <Button onClick={fetchChatCompletion}>Generate Video</Button>
 
 
     <Button onClick={generateAndUploadAudio} >Test audio maker</Button>

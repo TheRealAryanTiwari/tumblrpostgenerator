@@ -1,7 +1,4 @@
 import { ElevenLabsClient } from "elevenlabs";
-import * as dotenv from "dotenv";
-
-dotenv.config();
 
 const ELEVENLABS_API_KEY = process.env["NEXT_PUBLIC_ELEVENLABS_API_KEY"];
 
