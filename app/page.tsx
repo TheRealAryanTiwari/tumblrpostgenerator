@@ -15,7 +15,7 @@ import { z } from "zod";
 import { RenderControls } from "../components/RenderControls";
 
 const container: React.CSSProperties = {
-  maxWidth: 400,
+  maxWidth: 400,  
   margin: "auto",
   marginBottom: 20,
   justifyContent:"center",
