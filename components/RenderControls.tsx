@@ -8,8 +8,8 @@ import { ErrorComp } from "./Error";
 import { Input } from "./Input";
 import { ProgressBar } from "./ProgressBar";
 import { Spacing } from "./Spacing";
-import { generateScript } from "./generateScript";
-import { generateAndUploadAudio } from "./generateAndUploadAudio";
+import { generateScript } from "./apiFunctions/generateScript";
+import { generateAndUploadAudio } from "./apiFunctions/generateAndUploadAudio";
 import { loadFont, fontFamily } from "@remotion/google-fonts/Inter";
 import React, { useMemo } from "react";
 
